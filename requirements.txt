@@ -1,0 +1,9 @@
+# PostgreSQL CSV Data Loader - Python Dependencies
+# Python 3.8+ required
+
+# PostgreSQL adapter for Python
+psycopg2>=2.9.0
+
+# Optional: Binary version for Windows users (faster, no compilation needed)
+# Uncomment the line below if psycopg2 installation fails:
+# psycopg2-binary>=2.9.0
