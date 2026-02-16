@@ -102,34 +102,6 @@ TABLE = {
 | `TABLE.schema` | Database schema | `"public"` |
 | `TABLE.primary_key` | Primary key column name (optional) | `"emergency_id"` |
 
-## Usage
 
-### Running the Script
-
-```bash
-python load_csv_to_postgresql.py
-```
-
-### What the Script Does
-
-1. **Reads CSV file**: Loads the CSV file specified in configuration
-2. **Infers column types**: Analyzes first 100 rows to determine data types
-3. **Connects to PostgreSQL**: Establishes connection using configured credentials
-4. **Drops existing table**: If table exists, drops it (WARNING: data loss)
-5. **Creates new table**: Generates CREATE TABLE statement with inferred types and primary key
-6. **Loads data**: Uses COPY command for high-performance bulk insert
-7. **Verifies**: Counts and reports number of rows inserted
-
-### Type Inference Rules
-
-The script automatically infers column types based on these rules:
-
-| Column Name | Inferred Type | Logic |
-|-------------|---------------|-------|
-| `emergency_id` | `INTEGER` | Always treated as integer ID |
-| `fecha_real` | `TIMESTAMP` | Always treated as timestamp |
-| Other columns | `INTEGER` | If all non-empty values are integers |
-| Other columns | `DOUBLE PRECISION` | If any value contains decimal point |
-| Other columns | `TEXT` | Default fallback for all other cases |
 
 
