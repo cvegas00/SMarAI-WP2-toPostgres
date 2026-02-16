@@ -2,28 +2,19 @@
 
 ---
 
-Automated CSV to PostgreSQL data loader with intelligent type inference and configurable primary key support. This tool streamlines the process of importing large CSV files into PostgreSQL databases with automatic schema creation.
+Automated CSV to PostgreSQL data loader.
 
 ---
 
+Author: [Christian Velasco-Gallego](https://www.velascogallego.com/)
+
 ## Overview
-
-This project provides a simple yet powerful solution for loading CSV data into PostgreSQL databases:
-
-- **Automatic type inference**: Intelligently detects column data types (INTEGER, DOUBLE PRECISION, TEXT, TIMESTAMP)
-- **Configurable primary keys**: Define primary key columns through configuration file
-- **High-performance loading**: Uses PostgreSQL's COPY command for optimal performance
-- **Table management**: Automatically drops and recreates tables for fresh data loads
-- **Type-specific handling**: Special handling for emergency_id and fecha_real columns
 
 Main functionalities include:
 
 - CSV parsing with automatic column detection
-- Intelligent data type inference from sample data
 - Configurable database connection parameters
-- Primary key constraint support
 - Bulk data insertion using COPY for performance
-- Transaction management with rollback support
 
 ## Project Structure
 
@@ -41,7 +32,7 @@ PostgreSQL/
 ### Requirements
 
 - Python 3.8+
-- PostgreSQL 16+ (tested with PostgreSQL 18)
+- PostgreSQL 16+ 
 - Dependencies specified in `requirements.txt`
 
 **Key packages:**
@@ -106,7 +97,7 @@ TABLE = {
 | `POSTGRESQL.database` | Target database name | `"SmarAI"` |
 | `POSTGRESQL.user` | Database username | `"postgres"` |
 | `POSTGRESQL.password` | Database password | `"postgres"` |
-| `CSV.file_path` | Path to CSV file (relative or absolute) | `"data_processed.csv"` |
+| `CSV.file_path` | Path to CSV file | `"data_processed.csv"` |
 | `TABLE.name` | Target table name | `"data_processed"` |
 | `TABLE.schema` | Database schema | `"public"` |
 | `TABLE.primary_key` | Primary key column name (optional) | `"emergency_id"` |
@@ -141,100 +132,4 @@ The script automatically infers column types based on these rules:
 | Other columns | `DOUBLE PRECISION` | If any value contains decimal point |
 | Other columns | `TEXT` | Default fallback for all other cases |
 
-### Example Output
 
-```
-Detected 127 columns in CSV file.
-Table "public"."data_processed" exists. Dropping it...
-Table dropped successfully.
-Creating table...
-Table created successfully.
-Inserting data from CSV...
-Successfully inserted 39,213 rows into "public"."data_processed".
-Connection closed.
-```
-
-## Input Data Format
-
-The CSV file should:
-
-- Have a header row with column names
-- Use standard CSV format (comma-separated)
-- Be encoded in UTF-8
-- Contain consistent data types per column
-
-Example CSV structure:
-```csv
-emergency_id,fecha_real,emergencia_latitud,emergencia_longitud,t2m_minus_0,...
-507269,2010-01-03 20:06:00,0.622,0.103,0.484,...
-507480,2010-01-04 16:55:00,0.622,0.100,0.477,...
-```
-
-## SQL Queries
-
-After loading, retrieve data using standard SQL:
-
-```sql
--- Retrieve all data
-SELECT * FROM public.data_processed;
-
--- Retrieve specific columns
-SELECT emergency_id, fecha_real, emergencia_latitud
-FROM public.data_processed;
-
--- Filter by date range
-SELECT * FROM public.data_processed
-WHERE fecha_real BETWEEN '2010-01-01' AND '2010-12-31'
-ORDER BY fecha_real;
-
--- Aggregate statistics
-SELECT
-    COUNT(*) as total_records,
-    MIN(fecha_real) as earliest_date,
-    MAX(fecha_real) as latest_date
-FROM public.data_processed;
-```
-
-## Troubleshooting
-
-### Connection Issues
-
-**Error: `psycopg2.OperationalError`**
-
-- Verify PostgreSQL service is running
-- Check `pg_hba.conf` authentication method (should be `md5` not `scram-sha-256`)
-- Verify database exists: `psql -l` or connect to `postgres` database first
-- Check credentials in `config.py`
-
-### Performance Issues
-
-For large CSV files (>1 million rows):
-
-- The script uses COPY command which is already optimized
-- Consider increasing PostgreSQL's `maintenance_work_mem` setting
-- Disable indexes temporarily if adding to existing table
-
-### Type Inference Issues
-
-If types are incorrectly inferred:
-
-- Check first 100 rows have representative data
-- Modify `infer_column_type()` function in `load_csv_to_postgresql.py`
-- Add custom type rules for specific column names
-
-## Technical Notes
-
-- **Transaction safety**: All operations are wrapped in transactions with rollback on error
-- **Table recreation**: Script drops existing table - ensure you have backups if needed
-- **Primary key uniqueness**: CSV must have unique values in primary key column
-- **Performance**: COPY command is fastest method for bulk loading (typically 10-100x faster than INSERT)
-- **Encoding**: CSV must be UTF-8 encoded
-
-## Author
-
-Christian Velasco-Gallego
-[www.velascogallego.com](https://www.velascogallego.com/)
-
-## License
-
-This project is provided as-is for data loading purposes.
