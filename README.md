@@ -6,8 +6,6 @@ Automated CSV to PostgreSQL data loader.
 
 ---
 
-Author: [Christian Velasco-Gallego](https://www.velascogallego.com/)
-
 ## Overview
 
 Main functionalities include:
